@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel de Evasões</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050811;
+      --bg-card: #111522;
+      --bg-card-hover: #171c2b;
+      --primary: #ff3131;
+      --text: #f5f5f5;
+      --muted: #b5b5c5;
+      --accent: #ffcc33;
+      --border: #222737;
+      --radius: 18px;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      color: var(--primary);
+      font-size: 2.4rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    /* ---------- CARDS BÁSICOS ---------- */
+    .card {
+      background: var(--bg-card);
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: .25s ease;
+    }
+
+    /* Hover com borda vermelha */
+    .card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+      border: 2px solid #ff3131;
+      box-shadow: 0 0 15px rgba(255, 49, 49, 0.3);
+    }
+
+    .card-title {
+      font-size: 1rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-value {
+      font-size: 3rem;
+      color: var(--accent);
+      font-weight: bold;
+      margin: 12px 0;
+    }
+
+    .card-subtitle {
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .card-footer {
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    /* ---------- CARD IMPACTO ---------- */
+    .card-grande {
+      grid-column: 1 / -1;
+      padding: 32px;
+    }
+
+    .impacto-texto {
+      margin-top: 12px;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .impacto-lista {
+      margin-top: 20px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      padding-left: 20px;
+    }
+
+    .impacto-lista strong {
+      color: var(--accent);
+    }
+
+    /* ---------- CARD GRÁFICO PIZZA ---------- */
+    .card-pizza-grande {
+      grid-column: 1 / -1;
+      padding: 32px;
+    }
+
+    .pizza-grande-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .pizza-grande-chart {
+      width: 380px;
+      height: 380px;
+    }
+
+    .pizza-grande-chart canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .pizza-grande-text {
+      max-width: 420px;
+    }
+
+    .pizza-grande-text h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .pizza-grande-text ul {
+      list-style: disc;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .pizza-grande-text strong {
+      color: var(--accent);
+    }
+
+    @media (max-width: 800px) {
+      .pizza-grande-content {
+        flex-direction: column;
+      }
+
+      .pizza-grande-chart {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    /* ---------- TABELA DESTINOS (JÁ SAÍRAM) ---------- */
+    .destino-header {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      padding: 12px 10px;
+      background: #1a1f2e;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .destino-item {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      padding: 14px 10px;
+      border-bottom: 1px solid #222737;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .destino-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .destino-orgao {
+      color: var(--text);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .destino-qtd {
+      text-align: right;
+      color: #ff6b6b;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .arrow {
+      display: inline-block;
+      transition: .2s;
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    .destino-detalhes {
+      display: none;
+      padding: 12px 20px 12px 26px;
+      border-left: 2px solid var(--primary);
+      margin-bottom: 8px;
+      animation: fadeIn .3s ease;
+    }
+
+    .destino-nome {
+      padding: 8px 14px;
+      background: #171c2b;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      border: 1px solid #222737;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- CARD GRID DESTINOS FUTUROS ---------- */
+    .card-grid-destinos {
+      grid-column: 1 / -1;
+      padding: 32px;
+    }
+
+    .card-grid-destinos .card-title {
+      font-size: 1.2rem;
+      color: var(--primary);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .destinos-grid-descritivo {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .destinos-grid {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+    }
+
+    .destino-box {
+      background: #171c2b;
+      border-radius: 14px;
+      padding: 14px 16px;
+      border: 1px solid #222737;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .destino-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .destino-box-header span.destino-nome-orgao {
+      text-transform: uppercase;
+    }
+
+    .destino-box-header span.destino-contagem {
+      color: #ff6b6b;
+      font-size: 0.9rem;
+    }
+
+    .destino-box-lista {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .destino-box-lista span {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>Observatório das Evasões</h1>
+      <p>Auditores e Fiscais da Receita Estadual do Amapá</p>
+    </header>
+
+    <div class="cards-grid">
+
+      <!-- CARD 1 -->
+      <div class="card">
+        <div class="card-title">Dias sem evasão</div>
+        <div class="card-value">1</div>
+        <div class="card-subtitle">dias sem perder um Auditor Fiscal</div>
+        <div class="card-footer">
+          Última saída: 19/11/2025<br>
+          Recorde: <strong>61 dias</strong>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="card">
+        <div class="card-title">Total de evasões</div>
+        <div class="card-value">10</div>
+        <div class="card-subtitle">auditores que deixaram o quadro</div>
+      </div>
+
+      <!-- CARD IMPACTO -->
+      <div class="card card-grande">
+        <div class="card-title">Impacto das Evasões</div>
+
+        <p class="impacto-texto">
+          A saída de auditores fiscais gera redução significativa na capacidade de fiscalização,
+          aumenta o tempo de resposta a irregularidades e diminui o potencial de arrecadação do Estado.
+        </p>
+
+        <ul class="impacto-lista">
+          <li><strong>Perda de experiência técnica</strong> acumulada ao longo dos anos</li>
+          <li><strong>Aumento da carga de trabalho</strong> para os servidores restantes</li>
+          <li><strong>Maior risco de evasão fiscal</strong> devido à fiscalização reduzida</li>
+          <li><strong>Diminuição da eficiência</strong> em auditorias e processos administrativos</li>
+          <li><strong>Impacto direto na arrecadação</strong> e no financiamento de políticas públicas</li>
+        </ul>
+      </div>
+
+      <!-- CARD DO GRÁFICO PIZZA -->
+      <div class="card card-pizza-grande">
+        <div class="card-title">70 foram nomeados, apenas 44 tomaram posse</div>
+
+        <div class="pizza-grande-content">
+          <div class="pizza-grande-chart">
+            <canvas id="pizzaSituacao"></canvas>
+          </div>
+
+          <div class="pizza-grande-text">
+            <h3>Situação atual</h3>
+            <ul>
+              <li><strong>10</strong> – Nomeados em outro fisco</li>
+              <li><strong>6</strong> – Nomeados nos próximos 30 dias </li>
+              <li><strong>10</strong> – Aguardando nomeação próximos meses</li>
+              <li><strong>18</strong> – Estudando para 8 concursos no próximo ano</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD DESTINOS DA EVASÃO (JÁ SAÍRAM) -->
+      <div class="card card-grande">
+        <div class="card-title" style="font-size:1.4rem; color: var(--primary); margin-bottom:10px;">
+          Destinos da Evasão
+        </div>
+
+        <p style="color: var(--muted); font-size:1rem; margin-bottom:20px;">
+          Lista de órgãos para os quais os Auditores já se transferiram após exoneração ou desistência de posse.
+        </p>
+
+        <!-- Cabeçalho -->
+        <div class="destino-header">
+          <span>ÓRGÃO DE DESTINO</span>
+          <span>QUANTIDADE</span>
+        </div>
+
+        <!-- PERNAMBUCO -->
+        <div class="destino-item" onclick="toggleDestino(this)">
+          <div class="destino-orgao">
+            <span class="arrow">›</span> PERNAMBUCO
+          </div>
+          <div class="destino-qtd">6</div>
+        </div>
+        <div class="destino-detalhes">
+          <div class="destino-nome">CLEITON</div>
+          <div class="destino-nome">ALINE</div>
+          <div class="destino-nome">THIAGO</div>
+          <div class="destino-nome">FRANCISCO</div>
+          <div class="destino-nome">ELI</div>
+          <div class="destino-nome">HUELINTON</div>
+        </div>
+
+        <!-- AMAZONAS -->
+        <div class="destino-item" onclick="toggleDestino(this)">
+          <div class="destino-orgao">
+            <span class="arrow">›</span> AMAZONAS
+          </div>
+          <div class="destino-qtd">1</div>
+        </div>
+        <div class="destino-detalhes">
+          <div class="destino-nome">WESLEY</div>
+        </div>
+
+        <!-- RIO GRANDE DO SUL -->
+        <div class="destino-item" onclick="toggleDestino(this)">
+          <div class="destino-orgao">
+            <span class="arrow">›</span> RIO GRANDE DO SUL
+          </div>
+          <div class="destino-qtd">1</div>
+        </div>
+        <div class="destino-detalhes">
+          <div class="destino-nome">LEANDRO</div>
+        </div>
+
+        <!-- SAIU PRA ESTUDAR -->
+        <div class="destino-item" onclick="toggleDestino(this)">
+          <div class="destino-orgao">
+            <span class="arrow">›</span> SAIU PRA ESTUDAR
+          </div>
+          <div class="destino-qtd">1</div>
+        </div>
+        <div class="destino-detalhes">
+          <div class="destino-nome">LEILA</div>
+        </div>
+
+        <!-- AUDITOR FISCAL DO TRABALHO -->
+        <div class="destino-item" onclick="toggleDestino(this)">
+          <div class="destino-orgao">
+            <span class="arrow">›</span> AUDITOR FISCAL DO TRABALHO
+          </div>
+          <div class="destino-qtd">1</div>
+        </div>
+        <div class="destino-detalhes">
+          <div class="destino-nome">PIETRA</div>
+        </div>
+      </div>
+
+      <!-- CARD: POSSÍVEIS DESTINOS FUTUROS -->
+      <div class="card card-grid-destinos">
+        <div class="card-title">Possíveis destinos das próximas evasões</div>
+        <p class="destinos-grid-descritivo">
+          Mapa informal dos destinos mais prováveis para os próximos desligamentos, considerando nomeações em outros fiscos
+          e movimentações já anunciadas.
+        </p>
+
+        <div class="destinos-grid">
+          <!-- AMAZONAS -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">AMAZONAS</span>
+              <span class="destino-contagem">4 nomes</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Tatiane</span>
+              <span>Murilo</span>
+              <span>João Victor</span>
+              <span>Thiago Bravo</span>
+            </div>
+          </div>
+
+          <!-- RORAIMA -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">RORAIMA</span>
+              <span class="destino-contagem">5 nomes</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Helio</span>
+              <span>Diego</span>
+              <span>Murilo</span>
+              <span>Thiago Bravo</span>
+              <span>Alan Trello</span>
+            </div>
+          </div>
+
+          <!-- ACRE -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">ACRE</span>
+              <span class="destino-contagem">4 nomes</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Murilo</span>
+              <span>Hugo</span>
+              <span>Jahilson</span>
+              <span>Fernanda</span>
+            </div>
+          </div>
+
+          <!-- PERNAMBUCO -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">PERNAMBUCO</span>
+              <span class="destino-contagem">2 nomes</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Marília</span>
+              <span>Thiago Bravo</span>
+            </div>
+          </div>
+
+          <!-- JABOATÃO -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">JABOATÃO</span>
+              <span class="destino-contagem">1 nome</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Lucas Danger</span>
+            </div>
+          </div>
+
+          <!-- CUIABÁ -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">CUIABÁ</span>
+              <span class="destino-contagem">3 nomes</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Alan Sales</span>
+              <span>Luciano Carriel</span>
+              <span>Helio</span>
+            </div>
+          </div>
+
+          <!-- ISS RIO DE JANEIRO -->
+          <div class="destino-box">
+            <div class="destino-box-header">
+              <span class="destino-nome-orgao">ISS RIO DE JANEIRO</span>
+              <span class="destino-contagem">2 nomes</span>
+            </div>
+            <div class="destino-box-lista">
+              <span>Helio</span>
+              <span>Harã</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div> <!-- grid -->
+  </div> <!-- wrapper -->
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // Gráfico de pizza
+    document.addEventListener('DOMContentLoaded', function () {
+      const ctx = document.getElementById("pizzaSituacao");
+      if (ctx) {
+        new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: [
+              "Nomeados em outro fisco",
+              "Serão nomeados",
+              "Aguardando nomeação",
+              "Estudando para concursos"
+            ],
+            datasets: [{
+              data: [12, 5, 9, 18],
+              backgroundColor: ["#ffcc33", "#ff6b6b", "#4bc0c0", "#9966ff"],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+    });
+
+    // Expansão de destinos (quem já saiu)
+    function toggleDestino(el) {
+      const details = el.nextElementSibling;
+      const arrow = el.querySelector(".arrow");
+
+      if (details.style.display === "block") {
+        details.style.display = "none";
+        arrow.style.transform = "rotate(0deg)";
+      } else {
+        details.style.display = "block";
+        arrow.style.transform = "rotate(90deg)";
+      }
+    }
+  </script>
+
+</body>
+</html>
