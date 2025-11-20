@@ -98,7 +98,7 @@
       color: var(--muted);
     }
 
-    /* ---------- CARD IMPACTO ---------- */
+    /* ---------- CARD IMPACTO TEXTO ---------- */
     .card-grande {
       grid-column: 1 / -1;
       padding: 32px;
@@ -120,6 +120,31 @@
 
     .impacto-lista strong {
       color: var(--accent);
+    }
+
+    /* ---------- CARD IMPACTO FINANCEIRO + GRÁFICO ---------- */
+    .impacto-financeiro-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-start;
+      margin-top: 12px;
+    }
+
+    .impacto-financeiro-text {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .impacto-financeiro-chart {
+      width: 380px;
+      max-width: 100%;
+      height: 260px;
+    }
+
+    .impacto-financeiro-chart canvas {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     /* ---------- CARD GRÁFICO PIZZA ---------- */
@@ -342,7 +367,7 @@
         <div class="card-subtitle">auditores que deixaram o quadro</div>
       </div>
 
-      <!-- CARD IMPACTO -->
+      <!-- CARD IMPACTO QUALITATIVO -->
       <div class="card card-grande">
         <div class="card-title">Impacto das Evasões</div>
 
@@ -360,6 +385,68 @@
         </ul>
       </div>
 
+      <!-- CARD IMPACTO FINANCEIRO + GRÁFICO -->
+      <div class="card card-grande">
+        <div class="card-title" style="font-size:1.4rem; color: var(--primary); margin-bottom:12px;">
+          Impacto Financeiro das Evasões
+        </div>
+
+        <div class="impacto-financeiro-layout">
+          <div class="impacto-financeiro-text">
+            <p style="color: var(--muted); font-size:1rem; margin-bottom:14px;">
+              A saída de servidores após o Curso de Formação já gerou perdas significativas para os cofres públicos,
+              considerando o investimento realizado na capacitação e os salários pagos aos que não permaneceram no cargo.
+            </p>
+
+            <div style="margin-bottom: 16px;">
+              <div style="font-size:1.05rem; font-weight:600; color: var(--accent);">
+                💰 Investimento no Curso de Formação
+              </div>
+              <p style="margin:6px 0; color:var(--text);">
+                • Custo total do CF + Bolsas Auxílio:
+                <strong style="color:var(--accent);">R$ 1.015.000,00</strong><br>
+                • Custo por Auditor/Fiscal:
+                <strong style="color:var(--accent);">R$ 23.068,18</strong><br>
+                • Custo já perdido com abandonos:
+                <strong style="color:#ff6b6b;">R$ 230.681,82</strong> (23%)
+              </p>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <div style="font-size:1.05rem; font-weight:600; color: var(--accent);">
+                📉 Salários pagos a servidores que saíram
+              </div>
+              <p style="margin:6px 0; color:var(--text);">
+                • Total pago em salários até a saída:
+                <strong style="color:#ff6b6b;">R$ 2.978.035,52</strong>
+              </p>
+
+              <ul style="margin-top:10px; color:var(--muted); font-size:0.95rem; padding-left:20px;">
+                <li>1 servidor saiu após <strong>4 meses</strong>: R$ 130.902,66</li>
+                <li>6 servidores saíram após <strong>9 meses</strong>: R$ 1.767.185,91</li>
+                <li>3 servidores saíram após <strong>11 meses</strong>: R$ 1.079.946,95</li>
+              </ul>
+            </div>
+
+            <div style="padding: 14px; background:#171c2b; border-radius:12px; border:1px solid #222737;">
+              <p style="font-size:1.05rem; color:var(--accent); margin-bottom:4px;">
+                💥 Prejuízo financeiro total estimado:
+              </p>
+              <p style="font-size:1.6rem; color:#ff6b6b; font-weight:bold; margin:0;">
+                R$ 3.208.717,34
+              </p>
+              <p style="font-size:0.9rem; color:var(--muted); margin-top:5px;">
+                (Custo de formação perdido + salários pagos até a saída)
+              </p>
+            </div>
+          </div>
+
+          <div class="impacto-financeiro-chart">
+            <canvas id="impactoBar"></canvas>
+          </div>
+        </div>
+      </div>
+
       <!-- CARD DO GRÁFICO PIZZA -->
       <div class="card card-pizza-grande">
         <div class="card-title">70 foram nomeados, apenas 44 tomaram posse</div>
@@ -372,9 +459,9 @@
           <div class="pizza-grande-text">
             <h3>Situação atual</h3>
             <ul>
-              <li><strong>10</strong> – Nomeados em outro fisco</li>
-              <li><strong>6</strong> – Nomeados nos próximos 30 dias </li>
-              <li><strong>10</strong> – Aguardando nomeação próximos meses</li>
+              <li><strong>10</strong> – Nomeados em outros fiscos</li>
+              <li><strong>7</strong> – Sairão nos próximos 30 dias para Roraima e Amazonas</li>
+              <li><strong>9</strong> – Estão classificados em outros fiscos com previsão de nomeação dentro de 6 meses</li>
               <li><strong>18</strong> – Estudando para 8 concursos no próximo ano</li>
             </ul>
           </div>
@@ -568,27 +655,71 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-    // Gráfico de pizza
+    // Gráficos
     document.addEventListener('DOMContentLoaded', function () {
-      const ctx = document.getElementById("pizzaSituacao");
-      if (ctx) {
-        new Chart(ctx, {
+      // Pizza situação
+      const ctxPizza = document.getElementById("pizzaSituacao");
+      if (ctxPizza) {
+        new Chart(ctxPizza, {
           type: "pie",
           data: {
             labels: [
-              "Nomeados em outro fisco",
-              "Serão nomeados",
-              "Aguardando nomeação",
+              "Nomeados em outros fiscos",
+              "Sairão nos próximos 30 dias",
+              "Classificados em outros fiscos",
               "Estudando para concursos"
             ],
             datasets: [{
-              data: [12, 5, 9, 18],
+              data: [10, 7, 9, 18],
               backgroundColor: ["#ffcc33", "#ff6b6b", "#4bc0c0", "#9966ff"],
               borderWidth: 0
             }]
           },
           options: {
             plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // Barra impacto financeiro
+      const ctxBar = document.getElementById("impactoBar");
+      if (ctxBar) {
+        new Chart(ctxBar, {
+          type: "bar",
+          data: {
+            labels: [
+              "Custo CF perdido",
+              "Salários pagos até a saída",
+              "Total estimado"
+            ],
+            datasets: [{
+              label: "R$ (milhões)",
+              data: [230681.82, 2978035.52, 3208717.34],
+              backgroundColor: ["#ff6b6b", "#4bc0c0", "#ffcc33"],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            plugins: {
+              legend: {
+                labels: { color: "#f5f5f5" }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: "#f5f5f5" },
+                grid: { color: "rgba(255,255,255,0.05)" }
+              },
+              y: {
+                ticks: {
+                  color: "#f5f5f5",
+                  callback: function(value) {
+                    return "R$ " + (value / 1000000).toFixed(1) + " mi";
+                  }
+                },
+                grid: { color: "rgba(255,255,255,0.05)" }
+              }
+            }
           }
         });
       }
